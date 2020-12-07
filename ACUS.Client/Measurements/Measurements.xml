@@ -1053,4 +1053,56 @@
       <Query isDesigner="false">select count(*) from {tablePrefix}FI</Query>
     </OracleQueries>
   </Measurement>
+  <Measurement name="Is Route Planning set up?" returnType="bool">
+    <SqlQueries>
+      <Query isDesigner="true">
+      ;WITH sub_config AS (
+          SELECT configid, name, 1 AS relative_depth
+          FROM PORTAL_CONFIG
+          WHERE name = 'TE_ISI'
+
+          UNION ALL
+
+          SELECT config.configid, config.name, sc.relative_depth + 1
+          FROM PORTAL_CONFIG config, sub_config sc
+          WHERE config.parentid = sc.configid
+      )
+      SELECT CASE 
+      WHEN 
+      (
+	      SELECT COUNT(*) 
+	      FROM sub_config AS sc
+	      INNER JOIN PORTAL_PAGEREF AS pr
+		      ON sc.configid = pr.configid
+	      INNER JOIN PORTAL_MENUACTION AS ma
+		      ON pr.refid = ma.refid
+	      INNER JOIN PORTAL_MENUITEM AS mi
+		      ON ma.menuid = mi.menuid
+	      WHERE 
+		      pr.pagename IN ('VisitPlanning')
+      ) > 0 OR
+      (
+	      SELECT COUNT(*)
+	      FROM sub_config AS sc
+	      INNER JOIN PORTAL_PAGEREF AS pr
+		      ON sc.configid = pr.configid
+	      INNER JOIN PORTAL_DIRECTBUTTONS AS db
+		      ON db.refid = pr.refid
+	      INNER JOIN PORTAL_HEADER_BUTTONS AS hb
+		      ON hb.directbuttonname = db.name
+	      INNER JOIN PORTAL_HEADER AS h
+		      ON h.headerid = hb.headerid
+	      WHERE 
+		      pr.pagename IN ('VisitPlanning')
+      ) > 0
+      THEN 1
+      ELSE 0
+      END
+      </Query>
+    </SqlQueries>
+    <OracleQueries>
+      <Query isDesigner="false">select count(*) from {tablePrefix}FI</Query>
+      <Query isDesigner="false">select count(*) from {tablePrefix}FI</Query>
+    </OracleQueries>
+  </Measurement>
 </Measurements>
