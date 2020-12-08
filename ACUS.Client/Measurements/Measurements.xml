@@ -1105,4 +1105,26 @@
       <Query isDesigner="false">select count(*) from {tablePrefix}FI</Query>
     </OracleQueries>
   </Measurement>
+  <Measurement name="All signed completed service offers, all completed service offers with linked installed base " returnType="int">
+    <SqlQueries>
+      <Query isDesigner="false">
+      SELECT COUNT(*)
+      FROM {tablePrefix}PR
+      WHERE 
+	      F5045 = 1;
+      </Query>
+      <Query isDesigner="false">
+      SELECT COUNT(*)
+      FROM {tablePrefix}PR pr
+      INNER {tablePrefix}AU au
+	      ON au.ID_PR = pr.ID
+      INNER JOIN {tablePrefix}IB ib
+	      ON ib.ID_AU = au.ID;
+      </Query>
+    </SqlQueries>
+    <OracleQueries>
+      <Query isDesigner="false">select count(*) from {tablePrefix}FI</Query>
+      <Query isDesigner="false">select count(*) from {tablePrefix}FI</Query>
+    </OracleQueries>
+  </Measurement>
 </Measurements>
